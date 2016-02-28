@@ -1,0 +1,45 @@
+Security\UserBundle\Entity\User:
+    type: entity
+    table: security_user
+    repositoryClass: Security\UserBundle\Repository\UserRepository
+    gedmo:
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        full_name:
+            type: string
+            length: 255
+            nullable: true
+        phone:
+            type: string
+            length: 255
+            nullable: true
+        facebook_id:
+            type: string
+            length: 255
+            nullable: true
+        facebook_access_token:
+            type: string
+            length: 255
+            nullable: true
+        isActive:
+            type: boolean
+        create_datetime:
+            type: datetime
+            gedmo:
+                timestampable:
+                    on: create
+        update_datetime:
+            type: datetime
+            gedmo:
+                timestampable:
+                    on: update
+        last_login_client_ip:
+            type: string
+            nullable: true
+    #lifecycleCallbacks:
+    #    prePersist: [ setUsernameAtRegistration ]

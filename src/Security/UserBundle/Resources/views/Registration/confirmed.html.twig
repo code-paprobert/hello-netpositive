@@ -1,0 +1,28 @@
+{% extends "@UserBundle/Resources/views/layout.html.twig" %}
+
+{% block title %}NETPOSITIVE | Registration confirmed{% endblock %}
+
+{% block fos_user_content %}
+
+    <div class="login-box">
+        <div class="login-logo">
+            <a href="/">NET<b>POSITIVE</b></a>
+        </div><!-- /.login-logo -->
+        <div class="login-box-body">
+            <p class="login-box-msg">Successfull registration</p>
+
+            {% if app.session is not empty %}
+                {% set targetUrl = app.session.get('_security.' ~ app.security.token.providerKey ~ '.target_path') %}
+                {% if targetUrl is not empty %}
+                    <p class="login-box-msg"><a href="{{ targetUrl }}" class="text-center">You can sign in now</a></p>
+                {% else %}
+                    <p class="login-box-msg"><a href="{{ path("homepage") }}" class="text-center">You can sign in now</a></p>
+                {% endif %}
+
+
+            {% endif %}
+        </div><!-- /.login-box-body -->
+    </div><!-- /.login-box -->
+
+{% endblock %}
+

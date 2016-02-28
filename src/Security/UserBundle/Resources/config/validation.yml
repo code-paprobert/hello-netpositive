@@ -1,0 +1,114 @@
+# src/AppBundle/Resources/config/validation.yml
+Security\UserBundle\Entity\User:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: email
+    properties:
+        email:
+            - Email: ~
+        password:
+            - Length:
+                min: 2
+                max: 4096
+        phone:
+            - Regex: '/\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/'
+            # (123) 456 7899
+            # (123).456.7899
+            # (123)-456-7899
+            # 123-456-7899
+            # 123 456 7899
+            # 1234567899
+            # are supported
+        #full_name:
+
+# Note: We still want to validate the email
+# See FOSUserBundle/Resources/config/validation/orm.xml to understand
+# the UniqueEntity constraint that was originally applied to both
+# username and email fields
+#
+# As you can see, we are only applying the UniqueEntity constraint to
+# the email field and not the username field.
+FOS\UserBundle\Model\User:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+             fields: email
+             errorPath: email
+             message: fos_user.email.already_used
+             groups: [ "SecurityRegistration", "SecurityProfile" ]
+
+    properties:
+        email:
+            - NotBlank:
+                message: fos_user.email.blank
+                groups: [ "SecurityRegistration", "SecurityProfile" ]
+            - Length:
+                min: 2
+                minMessage: fos_user.email.short
+                max: 255
+                maxMessage: fos_user.email.long
+                groups: [ "SecurityRegistration", "ResetPassword" ]
+            - Email:
+                message: fos_user.email.invalid
+                groups: [ "SecurityRegistration", "SecurityProfile" ]
+        plainPassword:
+            - NotBlank:
+                message: fos_user.password.blank
+                groups: [ "SecurityRegistration", "ResetPassword", "ChangePassword" ]
+            - Length:
+                min: 2
+                max: 4096
+                minMessage: fos_user.password.short
+                groups: [ "SecurityRegistration", "SecurityProfile", "ResetPassword", "ChangePassword"]
+
+
+FOS\UserBundle\Model\Group:
+    properties:
+        name:
+            - NotBlank:
+                message: fos_user.group.blank
+                groups: [ "SecurityRegistration" ]
+            - Length:
+                min: 2
+                minMessage: fos_user.group.short
+                max: 255
+                maxMessage: fos_user.group.long
+                groups: [ "SecurityRegistration" ]
+
+FOS\UserBundle\Propel\User:
+    properties:
+        email:
+            - NotBlank:
+                message: fos_user.email.blank
+                groups: [ "SecurityRegistration", "SecurityProfile" ]
+            - Length:
+                min: 2
+                minMessage: fos_user.email.short
+                max: 255
+                maxMessage: fos_user.email.long
+                groups: [ "SecurityRegistration", "ResetPassword" ]
+            - Email:
+                message: fos_user.email.invalid
+                groups: [ "SecurityRegistration", "SecurityProfile" ]
+
+        plainPassword:
+            - NotBlank:
+                message: fos_user.password.blank
+                groups: [ "SecurityRegistration", "ResetPassword", "ChangePassword" ]
+            - Length:
+                min: 2
+                max: 4096
+                minMessage: fos_user.password.short
+                groups: [ "SecurityRegistration", "SecurityProfile", "ResetPassword", "ChangePassword"]
+
+
+FOS\UserBundle\Propel\Group:
+    properties:
+        name:
+            - NotBlank:
+                message: fos_user.group.blank
+                groups: [ "SecurityRegistration" ]
+            - Length:
+                min: 2
+                minMessage: fos_user.group.short
+                max: 255
+                maxMessage: fos_user.group.long
+                groups: [ "SecurityRegistration" ]

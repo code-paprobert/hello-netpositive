@@ -1,0 +1,12 @@
+
+<div class="login-box">
+    <div class="login-logo">
+        <a href="/">NET<b>POSITIVE</b></a>
+    </div><!-- /.login-logo -->
+    <div class="login-box-body">
+        <p class="login-box-msg">Now you are signed in {{ user.fullName|default(user.email) }}</p>
+        <p class="login-box-msg">
+            <a href="{{ path('fos_user_security_logout') }}" class="text-center">Sign out</a>
+        </p>
+    </div>
+</div>

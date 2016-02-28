@@ -1,0 +1,43 @@
+# To get started with security, check out the documentation:
+# http://symfony.com/doc/current/book/security.html
+security:
+    encoders:
+        FOS\UserBundle\Model\UserInterface: bcrypt
+    providers:
+        fos_userbundle:
+            id: fos_user.user_provider.username
+        database_users:
+            entity: { class: UserBundle:User }
+
+    firewalls:
+        login_firewall:
+            pattern:   ^/login$
+            anonymous: ~
+        registration_firewall:
+            pattern:   ^/register
+            anonymous: ~
+        secure_area:
+            pattern: ^/
+            form_login:
+                check_path: /login_check
+                login_path: /login
+                default_target_path: /profile
+            oauth:
+                failure_path: /login
+                login_path: /login
+                check_path: /login
+                default_target_path: /profile
+                provider: fos_userbundle
+                resource_owners:
+                    facebook:           "/login/check-facebook"
+                oauth_user_provider:
+                    service: my_user_provider
+            anonymous:    true
+            logout:
+                path:           /logout
+                target:         /login
+
+    access_control:
+        - { path: ^/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/login/*, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/, roles: ROLE_USER }
