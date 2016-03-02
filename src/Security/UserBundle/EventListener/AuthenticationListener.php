@@ -2,42 +2,41 @@
 
 namespace Security\UserBundle\EventListener;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Event\AuthenticationFailureEvent;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Gedmo\Timestampable\Traits\TimestampableEntity;
-
-
-use Security\UserBundle\Event;
 
 class AuthenticationListener
 {
+    /**
+     * @var EntityManagerInterface
+     */
+    protected $em;
 
-    protected $container;
+    protected $requestStack;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(EntityManagerInterface $em, RequestStack $requestStack)
     {
-        $this->container = $container;
+        $this->em = $em;
+        $this->requestStack = $requestStack;
     }
 
-    public function onAuthenticationFailure( AuthenticationFailureEvent $event )
+    public function onAuthenticationFailure(AuthenticationFailureEvent $event)
     {
         // executes on failed login
     }
 
-    public function onAuthenticationSuccess( InteractiveLoginEvent $event )
+    public function onAuthenticationSuccess(InteractiveLoginEvent $event)
     {
-
         // executes on successful login
         $user = $event->getAuthenticationToken()->getUser();
 
-        $user->setLastLoginClientIp($this->container->get("request")->getClientIp());
+        $user->setLastLoginClientIp($this->requestStack->getMasterRequest()->getClientIp());
         $user->setLastLoginDatetime(new \Datetime());
 
-        $em = $this->container->get('doctrine')->getEntityManager();
-
-        $em->persist($user);
-        $em->flush();
+        $this->em->persist($user);
+        $this->em->flush();
 
     }
 }

@@ -23,8 +23,8 @@ hwi_oauth:
     resource_owners:
         facebook:
             type:                facebook
-            client_id:           1085320454858054
-            client_secret:       83626f1517c299dfa715cea0ec2f9e3f
+            client_id:           %facebook_client_id%
+            client_secret:       %facebook_client_secret%
             scope:               "email"
             paths:
                 email:           email

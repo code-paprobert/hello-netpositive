@@ -2,21 +2,15 @@
 
 namespace Security\UserBundle\Controller;
 
-
-use Security\RegisterFormType;
+use Security\UserBundle\Form\RegisterFormType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Security\UserBundle\Entity\User;
-use Security\UserBundle\Form;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 
-class SecurityController extends Controller implements ContainerAwareInterface
+class SecurityController extends Controller
 {
-
-    protected $container;
 
     public function loginAction(Request $request)
     {
@@ -29,12 +23,11 @@ class SecurityController extends Controller implements ContainerAwareInterface
         $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render(
-            'UserBundle:Security:login.html.twig',
-            array(
+            'UserBundle:Security:login.html.twig', [
                 // last username entered by the user
                 'last_username' => $lastUsername,
                 'error'         => $error,
-            )
+            ]
         );
 
     }
@@ -51,9 +44,7 @@ class SecurityController extends Controller implements ContainerAwareInterface
 
     public function registrationAction(Request $request)
     {
-
-        $form = $this->createForm(new \Security\UserBundle\Form\RegisterFormType());
-
+        $form = $this->createForm(new RegisterFormType());
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
@@ -64,13 +55,11 @@ class SecurityController extends Controller implements ContainerAwareInterface
             $user->setIsActive(true);
             $user->setRoles(["ROLE_USER"]);
 
-
             $em = $this->getDoctrine()->getManager();
             $em->persist($user);
             $em->flush();
 
-            $request->getSession()->getFlashBag()->add('success', 'Welcome to the Death Star! Have a magical day!');
-
+            $this->addFlash('success', 'Welcome to the Death Star! Have a magical day!');
         }
 
         return $this->render('UserBundle:Security:registration.html.twig', [
@@ -89,14 +78,10 @@ class SecurityController extends Controller implements ContainerAwareInterface
 
     private function encodePassword(User $user, $plainPassword)
     {
-        $encoder = $this->container->get('security.encoder_factory')->getEncoder($user);
+        /** @var PasswordEncoderInterface $encoder */
+        $encoder = $this->get('security.encoder_factory')->getEncoder($user);
 
         return $encoder->encodePassword($plainPassword, $user->getSalt());
-    }
-
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
     }
 
     public function getFormErrorsAsString($form)
@@ -106,11 +91,9 @@ class SecurityController extends Controller implements ContainerAwareInterface
         $errors = $this->getFormErrors($form);
 
         if(!empty($errors)) {
-
             $errorsAsString = implode(' | ', array_map(function ($subErrorArray) {
                 return implode(', ',$subErrorArray);
             }, $errors));
-
         }
 
         return $errorsAsString;
@@ -120,7 +103,7 @@ class SecurityController extends Controller implements ContainerAwareInterface
     {
         $errors = array();
 
-        if ($form instanceof Form) {
+        if ($form instanceof FormInterface) {
             foreach ($form->getErrors() as $error) {
                 $errors[] = $error->getMessage();
             }
