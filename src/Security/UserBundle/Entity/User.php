@@ -23,9 +23,60 @@ class User extends BaseUser
      */
     protected $password;
 
+    /**
+     * @var array
+     */
     protected $roles;
 
+    /**
+     * @var string
+     */
     protected $plainPassword;
+
+    /**
+     * @var bool
+     */
+    protected $isActive = true;
+
+    /**
+     * @var string
+     */
+    protected $full_name;
+
+    /**
+     * @var string
+     */
+    protected $phone;
+
+    /**
+     * @var \DateTime
+     */
+    protected $create_datetime;
+
+    /**
+     * @var \DateTime
+     */
+    protected $update_datetime;
+
+    /**
+     * @var \DateTime
+     */
+    protected $last_login_datetime;
+
+    /**
+     * @var string
+     */
+    protected $last_login_client_ip;
+
+    /**
+     * @var string
+     */
+    protected $facebook_access_token;
+
+    /**
+     * @var string
+     */
+    protected $facebook_id;
 
     /**
      * @return mixed
@@ -36,14 +87,14 @@ class User extends BaseUser
     }
 
     /**
-     * @param mixed $plainPassword
+     * @param string $plainPassword
+     * @return $this
      */
     public function setPlainPassword($plainPassword)
     {
         $this->plainPassword = $plainPassword;
+        return $this;
     }
-
-    private $isActive = true;
 
     /**
      * Get id
@@ -59,7 +110,7 @@ class User extends BaseUser
      * Set username
      *
      * @param string $username
-     * @return User
+     * @return $this
      */
     public function setUsername($username)
     {
@@ -82,7 +133,7 @@ class User extends BaseUser
      * Set password
      *
      * @param string $password
-     * @return User
+     * @return $this
      */
     public function setPassword($password)
     {
@@ -105,14 +156,13 @@ class User extends BaseUser
      * Set email
      *
      * @param string $email
-     * @return User
+     * @return $this
      */
     public function setEmail($email)
     {
         $email = is_null($email) ? '' : $email;
 
         $this->email = $email;
-
         $this->username = $email;
 
         return $this;
@@ -128,6 +178,10 @@ class User extends BaseUser
         return $this->email;
     }
 
+    /**
+     * @param array $roles
+     * @return $this
+     */
     public function setRoles(array $roles)
     {
         $this->roles = $roles;
@@ -135,6 +189,9 @@ class User extends BaseUser
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function getRoles()
     {
         $roles = $this->roles;
@@ -144,6 +201,10 @@ class User extends BaseUser
         return array_unique($roles);
     }
 
+    /**
+     * @param $isActive
+     * @return $this
+     */
     public function setIsActive($isActive)
     {
         $this->isActive = $isActive;
@@ -156,11 +217,9 @@ class User extends BaseUser
         return $this->isActive;
     }
 
-    public function eraseCredentials()
-    {
-        // TODO: Implement eraseCredentials() method.
-    }
-
+    /**
+     * @return null
+     */
     public function getSalt()
     {
         return null;
@@ -175,27 +234,41 @@ class User extends BaseUser
         return true;
     }
 
+    /**
+     * @return bool
+     */
     public function isAccountNonLocked()
     {
         return true;
     }
 
+    /**
+     * @return bool
+     */
     public function isCredentialsNonExpired()
     {
         return true;
     }
 
+    /**
+     * @return bool
+     */
     public function isEnabled()
     {
         return $this->getIsActive();
     }
 
+    /**
+     * @return string
+     */
     function __toString()
     {
         return $this->getUsername();
     }
 
-
+    /**
+     * @return string
+     */
     public function serialize()
     {
         return serialize([
@@ -205,58 +278,21 @@ class User extends BaseUser
         ]);
     }
 
-    public function ereaseCredentials()
+    public function eraseCredentials()
     {
         $this->setPlainPassword(null);
     }
 
     public function unserialize($serialized)
     {
-        return list ( $this->id, $this->username, $this->password ) = unserialize($serialized);
+        return list($this->id, $this->username, $this->password) = unserialize($serialized);
     }
-
-    public function encodePassword(User $user, $plainPassword)
-    {
-        $encoder = $this->container->get('security.encoder_factory')->getEncoder($user);
-
-        return $encoder->encodePassword($plainPassword, $user->getSalt());
-    }
-    /**
-     * @var string
-     */
-    private $full_name;
-
-    /**
-     * @var string
-     */
-    private $phone;
-
-    /**
-     * @var \DateTime
-     */
-    private $create_datetime;
-
-    /**
-     * @var \DateTime
-     */
-    private $update_datetime;
-
-    /**
-     * @var \DateTime
-     */
-    private $last_login_datetime;
-
-    /**
-     * @var string
-     */
-    private $last_login_client_ip;
-
 
     /**
      * Set full_name
      *
      * @param string $fullName
-     * @return User
+     * @return $this
      */
     public function setFullName($fullName)
     {
@@ -279,7 +315,7 @@ class User extends BaseUser
      * Set phone
      *
      * @param string $phone
-     * @return User
+     * @return $this
      */
     public function setPhone($phone)
     {
@@ -302,7 +338,7 @@ class User extends BaseUser
      * Set create_datetime
      *
      * @param \DateTime $createDatetime
-     * @return User
+     * @return $this
      */
     public function setCreateDatetime($createDatetime)
     {
@@ -325,7 +361,7 @@ class User extends BaseUser
      * Set update_datetime
      *
      * @param \DateTime $updateDatetime
-     * @return User
+     * @return $this
      */
     public function setUpdateDatetime($updateDatetime)
     {
@@ -348,7 +384,7 @@ class User extends BaseUser
      * Set last_login_datetime
      *
      * @param \DateTime $lastLoginDatetime
-     * @return User
+     * @return $this
      */
     public function setLastLoginDatetime($lastLoginDatetime)
     {
@@ -371,7 +407,7 @@ class User extends BaseUser
      * Set last_login_client_ip
      *
      * @param string $lastLoginClientIp
-     * @return User
+     * @return $this
      */
     public function setLastLoginClientIp($lastLoginClientIp)
     {
@@ -390,18 +426,11 @@ class User extends BaseUser
         return $this->last_login_client_ip;
     }
 
-
-    /**
-     * @var string
-     */
-    private $facebook_access_token;
-
-
     /**
      * Set facebook_access_token
      *
      * @param string $facebookAccessToken
-     * @return User
+     * @return $this
      */
     public function setFacebookAccessToken($facebookAccessToken)
     {
@@ -419,17 +448,12 @@ class User extends BaseUser
     {
         return $this->facebook_access_token;
     }
-    /**
-     * @var string
-     */
-    private $facebook_id;
-
 
     /**
      * Set facebook_id
      *
      * @param string $facebookId
-     * @return User
+     * @return $this
      */
     public function setFacebookId($facebookId)
     {

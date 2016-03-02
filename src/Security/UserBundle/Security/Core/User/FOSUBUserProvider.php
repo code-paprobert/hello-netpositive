@@ -10,7 +10,6 @@ class FOSUBUserProvider extends BaseClass
 
     public function connect(UserInterface $user, UserResponseInterface $response)
     {
-
         $property = $this->getProperty($response);
         $username = $response->getUsername();
 
@@ -32,7 +31,6 @@ class FOSUBUserProvider extends BaseClass
 
     public function loadUserByOAuthUserResponse(UserResponseInterface $response)
     {
-
         $user = $this->userManager->findUserByUsernameOrEmail($response->getEmail());
 
         if (null === $user) {
